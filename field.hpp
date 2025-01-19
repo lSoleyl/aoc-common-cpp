@@ -52,6 +52,7 @@ struct FieldT {
   bool isAt(const Element& element, const Vector& pos) const { return validPosition(pos) && (*this)[pos] == element; }
   /** checked field access, which returns a copy to the field value if the position is valid */
   std::optional<Element> at(const Vector& pos) const { return validPosition(pos) ? std::optional<Element>(data[toOffset(pos)]) : std::nullopt; }
+  Element at(const Vector& pos, Element defaultValue) const { return validPosition(pos) ? data[toOffset(pos)] : defaultValue; }
 
   int toOffset(const Vector& pos) const { return pos.y * size.x + pos.x; }
   Vector fromOffset(size_t offset) const { return Vector(static_cast<int>(offset) % size.x, static_cast<int>(offset) / size.x); }

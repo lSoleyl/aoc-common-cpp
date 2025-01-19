@@ -9,6 +9,23 @@
 
 #include "vector.hpp"
 
+int int_div_round(int numerator, int denominator) {
+  // perform rounding with integer division by calculating floor(numerator/denominator + 1/2)
+  return (2 * numerator + denominator) / (2 * denominator);
+}
+
+
+int int_div_ceil(int numerator, int denominator) {
+  // perform celing integer division by calculating the division as follows
+  // a/b = n + r/b. (We want to round up whenever r > 0) 
+  // --> we must add b-1 to the numerator
+  // thus arriving at floor(numerator+denominator-1 / denominator)
+  // The added branch is necessary to correctly round up in case both numerator and denominator are negative in 
+  // which case we need floor(numerator+denominator+1 / denominator)
+  return (numerator + denominator + (denominator > 0 ? -1 : 1)) / denominator;
+}
+
+
 template<typename Element>
 struct FieldT {
   FieldT(int width, int height, Element fill) : size(width, height) {
@@ -95,12 +112,16 @@ struct FieldT {
 
   auto rangeFromPositionAndDirection(const Vector& position, const Vector& direction) {
     iterator begin(*this, position, direction);
+    if (!validPosition(position)) {
+      // starting at invalid position -> return an empty range
+      return std::ranges::subrange(begin, begin);
+    }
 
-    int dx = std::max(direction.x > 0 ? (size.x - position.x) / direction.x :
-                      direction.x < 0 ? (0 - position.x) / direction.x : std::numeric_limits<int>::max(), 0);
+    int dx = std::max(direction.x > 0 ? int_div_ceil(size.x - position.x, direction.x) :
+                      direction.x < 0 ? int_div_ceil(-1 - position.x, direction.x) : std::numeric_limits<int>::max(), 0);
 
-    int dy = std::max(direction.y > 0 ? (size.y - position.y) / direction.y :
-                      direction.y < 0 ? (0 - position.y) / direction.y : std::numeric_limits<int>::max(), 0);
+    int dy = std::max(direction.y > 0 ? int_div_ceil(size.y - position.y, direction.y) :
+                      direction.y < 0 ? int_div_ceil(-1 - position.y, direction.y) : std::numeric_limits<int>::max(), 0);
 
     auto distanceToEnd = std::min(dx, dy);
     return std::ranges::subrange(begin, begin + distanceToEnd);

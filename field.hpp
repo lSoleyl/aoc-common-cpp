@@ -5,6 +5,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <optional>
+
 #include "vector.hpp"
 
 template<typename Element>
@@ -31,6 +33,8 @@ struct FieldT {
   auto& operator[](this Self&& self, const Vector& pos) { return self.data[self.toOffset(pos)]; }
   bool validPosition(const Vector& pos) const { return pos.x >= 0 && pos.y >= 0 && pos.x < size.x && pos.y < size.y; }
   bool isAt(const Element& element, const Vector& pos) const { return validPosition(pos) && (*this)[pos] == element; }
+  /** checked field access, which returns a copy to the field value if the position is valid */
+  std::optional<Element> at(const Vector& pos) const { return validPosition(pos) ? std::optional<Element>(data[toOffset(pos)]) : std::nullopt; }
 
   int toOffset(const Vector& pos) const { return pos.y * size.x + pos.x; }
   Vector fromOffset(size_t offset) const { return Vector(static_cast<int>(offset) % size.x, static_cast<int>(offset) / size.x); }
@@ -112,6 +116,56 @@ struct FieldT {
   auto column(int column) {
     iterator begin(*this, Vector(column, 0), Vector::Down);
     return std::ranges::subrange(begin, begin + size.y);
+  }
+
+  struct rows_columns_iterator {
+    using element_type = std::ranges::subrange<iterator, iterator>;
+    using reference = element_type&;
+    using pointer = element_type*;
+    using iterator_category = std::random_access_iterator_tag;
+    using difference_type = int;
+    using self = rows_columns_iterator;
+    using subrange_method = element_type (FieldT::*)(int idx);
+
+    rows_columns_iterator() : field(nullptr), idx(0), method(nullptr) {}
+    rows_columns_iterator(FieldT* field, int idx, subrange_method method) : field(field), idx(idx), method(method) {}
+
+    bool operator==(const self& other) const { return idx == other.idx; } // assumption: no two iterators from different directions will be compared
+    bool operator!=(const self& other) const { return idx != other.idx; }
+
+    self& operator++() { ++idx; return *this; }
+    self operator++(int) { auto copy = *this; ++(*this); return copy; }
+    self& operator-() { --idx; return *this; }
+    self operator--(int) { auto copy = *this; --(*this); return copy; }
+    element_type operator*() const { return (field->*method)(idx); }
+
+    self& operator+=(int offset) { idx += offset; return *this; }
+    self& operator-=(int offset) { idx -= offset; return *this; }
+    self operator+(int offset) const { auto copy = *this; copy += offset; return copy; }
+    self operator-(int offset) const { auto copy = *this; copy -= offset; return copy; }
+
+    difference_type operator-(const iterator& other) const { return idx - other.idx; }
+    element_type operator[](int index) const { return (field->*method)(idx + index); }
+
+    FieldT* field;
+    int idx;
+    subrange_method method;
+  };
+
+  /** Returns an iterator over all rows of this field top to bottom (each row being returned as a range) */
+  auto rows() {
+    return std::ranges::subrange<rows_columns_iterator, rows_columns_iterator> {
+      rows_columns_iterator(this, 0, &FieldT::row),
+      rows_columns_iterator(this, size.y, &FieldT::row),
+    };
+  }
+
+  /** Returns an iterator over all columns of this field left to right (each row being returned as a range) */
+  auto columns() {
+    return std::ranges::subrange<rows_columns_iterator, rows_columns_iterator> {
+      rows_columns_iterator(this, 0, &FieldT::column),
+      rows_columns_iterator(this, size.x, &FieldT::column),
+    };
   }
 
   Vector size;

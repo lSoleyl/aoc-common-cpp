@@ -24,11 +24,29 @@ struct VectorT {
   static const VectorT Right;
   static const VectorT Down;
   static const VectorT Left;
+  static const VectorT UpRight;
+  static const VectorT DownRight;
+  static const VectorT DownLeft;
+  static const VectorT UpLeft;
 
-  static const std::initializer_list<const VectorT>& AllDirections() {
-    static const std::initializer_list<const VectorT> directions = { VectorT::Up, VectorT::Right, VectorT::Down, VectorT::Left };
+  /** All simple directions */
+  static const std::initializer_list<const VectorT>& AllSimpleDirections() {
+    static const std::initializer_list<const VectorT> directions = { Up, Right, Down, Left };
     return directions;
   }
+
+  /** All diagonal directions */
+  static const std::initializer_list<const VectorT>& AllDiagonalDirections() {
+    static const std::initializer_list<const VectorT> directions = { UpRight, DownRight, DownLeft, UpLeft };
+    return directions;
+  }
+
+  /** All directions (diagonal and simple) */
+  static const std::initializer_list<const VectorT>& AllDirections() {
+    static const std::initializer_list<const VectorT> directions = { Up, UpRight, Right, DownRight, Down, DownLeft, Left, UpLeft };
+    return directions;
+  }
+
 
   VectorT operator+(const VectorT& other) const { return VectorT(x + other.x, y + other.y); }
   VectorT& operator+=(const VectorT& other) {
@@ -150,6 +168,10 @@ template<typename T> const VectorT<T> VectorT<T>::Up(0, -1); // rows are increme
 template<typename T> const VectorT<T> VectorT<T>::Right(1, 0);
 template<typename T> const VectorT<T> VectorT<T>::Down(0, 1);
 template<typename T> const VectorT<T> VectorT<T>::Left(-1, 0);
+template<typename T> const VectorT<T> VectorT<T>::UpRight(1, -1);
+template<typename T> const VectorT<T> VectorT<T>::DownRight(1, 1);
+template<typename T> const VectorT<T> VectorT<T>::DownLeft(-1, 1);
+template<typename T> const VectorT<T> VectorT<T>::UpLeft(-1, -1);
 
 namespace std {
   template<typename T>

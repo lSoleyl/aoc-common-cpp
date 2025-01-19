@@ -68,7 +68,7 @@ struct PathFinderT {
       }
 
       // We have 4 paths to expand one in each direction
-      for (auto direction : Vector::AllDirections()) {
+      for (auto direction : Vector::AllSimpleDirections()) {
         auto nextPosition = entry.position + direction;
         if (field.validPosition(nextPosition) && field[nextPosition] != '#') {
           // No wall -> we can expand in that direction
@@ -93,7 +93,7 @@ struct PathFinderT {
     for (Vector pos = to; pos != from; ) {
       path.push_back(pos);
 
-      for (auto direction : Vector::AllDirections()) {
+      for (auto direction : Vector::AllSimpleDirections()) {
         auto prevPos = pos + direction;
         auto prevCost = getCost(prevPos);
         if (prevCost < cost) {

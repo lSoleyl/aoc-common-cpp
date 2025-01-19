@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <ranges>
+#include <concepts>
 
 namespace stream {
   namespace impl {
@@ -53,13 +54,14 @@ namespace stream {
       std::istream* stream = nullptr;
     };
 
+    template<typename Stream> requires std::derived_from<std::remove_reference_t<Stream>, std::istream>
     struct Lines {
-      Lines(std::istream& inputStream) : inputStream(inputStream) {}
+      Lines(Stream&& inputStream) : inputStream(std::forward<Stream>(inputStream)) {}
 
       auto begin() { return LineIterator(inputStream); }
       auto end() { return LineIterator::Sentinel(); }
 
-      std::istream& inputStream;
+      Stream inputStream; // will be Stream& for istream& and Stream for istream&&, so Lines will always ensure a valid lifetime
     };
 
 
@@ -68,9 +70,11 @@ namespace stream {
   }
 
   /** Utility function to simply iterate over all lines of a stream/file
+   *  The stream may be passed as x-value, the returned Lines range will then take ownership and ensure valid lifetime
    */
-  auto lines(std::istream& inputStream) {
-    return impl::Lines(inputStream);
+  template<typename Stream> requires std::derived_from<std::remove_reference_t<Stream>, std::istream>
+  auto lines(Stream&& inputStream) {
+    return impl::Lines<Stream>(std::forward<Stream>(inputStream));
   }
 
   template<typename Rng, typename Sep = impl::DefaultSeparator, typename Proj = std::identity>

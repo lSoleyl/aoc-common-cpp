@@ -27,9 +27,6 @@
     <ClInclude Include="stream.hpp">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="string_view.hpp">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="vector.hpp">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -37,6 +34,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="regex.hpp">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="split.hpp">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

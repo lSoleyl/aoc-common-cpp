@@ -77,6 +77,14 @@ namespace stream {
     return impl::Lines<Stream>(std::forward<Stream>(inputStream));
   }
 
+  /** Mini utiltiy to read a single line from the stream
+   */
+  auto line(std::istream& inputStream) {
+    std::string line;
+    std::getline(inputStream, line);
+    return line;
+  }
+
   template<typename Rng, typename Sep = impl::DefaultSeparator, typename Proj = std::identity>
   std::ostream& joinInto(std::ostream& out, Rng&& range, Sep&& separator = {}, Proj projection = {}) {
     auto it = std::begin(range);

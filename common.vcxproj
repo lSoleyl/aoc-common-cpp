@@ -137,6 +137,7 @@
     <ClInclude Include="regex.hpp" />
     <ClInclude Include="split.hpp" />
     <ClInclude Include="stream.hpp" />
+    <ClInclude Include="task.hpp" />
     <ClInclude Include="time.hpp" />
     <ClInclude Include="vector.hpp" />
   </ItemGroup>

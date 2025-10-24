@@ -39,5 +39,8 @@
     <ClInclude Include="split.hpp">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="task.hpp">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

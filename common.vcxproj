@@ -133,6 +133,7 @@
   <ItemGroup>
     <ClInclude Include="field.hpp" />
     <ClInclude Include="hash.hpp" />
+    <ClInclude Include="math.hpp" />
     <ClInclude Include="paths.hpp" />
     <ClInclude Include="regex.hpp" />
     <ClInclude Include="split.hpp" />

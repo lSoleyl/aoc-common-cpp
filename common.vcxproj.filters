@@ -45,5 +45,8 @@
     <ClInclude Include="math.hpp">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="string_view.hpp">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

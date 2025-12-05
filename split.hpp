@@ -81,5 +81,18 @@ namespace common {
   auto split(Source&& source, std::string_view splitString) {
     return impl::StringViewSplit<Source, std::string_view>(std::forward<Source>(source), splitString);
   }
+
+  /** Helper function for the common task of splitting a string into two by a separating character
+   *  The split will be performed at the first occurrence of splitChar if multiple occurrences exist.
+   *  If no split character exists, then 
+   */
+  std::pair<std::string_view, std::string_view> split2(std::string_view source, char splitChar) {
+    auto splitPos = std::find(source.begin(), source.end(), splitChar);
+
+    return std::make_pair(
+      std::string_view(source.begin(), splitPos),
+      std::string_view(splitPos != source.end() ? splitPos + 1 : source.end(), source.end())
+    );
+  }
 }
 

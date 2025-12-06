@@ -11,6 +11,53 @@ namespace math {
     return static_cast<int>(std::log10(number) + 1);
   }
 
+  /** Returns a vector of all the number's digits in order
+   */
+  std::vector<int> allDigits(int64_t number) {
+    std::vector<int> digits;
+    // Run through the loop at least once to return {0} when passing 0 instead of an empty vector
+    do {
+      auto div = std::div(number, 10LL);
+      digits.push_back(static_cast<int>(div.rem));
+      number = div.quot;
+    } while (number != 0);
+
+    std::reverse(digits.begin(), digits.end());
+    return digits;
+  }
+
+  template<typename T>
+  concept IntegralReference = std::is_integral_v<std::remove_reference_t<T>>;
+
+
+  template<typename T>
+  concept IntegerRange = requires(T&& range) {
+    range.begin();
+    range.end();
+    { *range.begin() } -> IntegralReference;
+  };
+
+
+  /** The inverse to allDigits() - constructs a number from the integer digits between 0-9
+   *  The digits may be passed in as ints or as char (where they will be interpreted as ASCII digits)
+   */
+  template<IntegerRange Range>
+  int64_t fromDigits(Range&& range) {
+    int64_t number = 0;
+    for (auto digit : range) {
+      number *= 10;
+      if constexpr (std::is_same_v<decltype(digit), char>) {
+        // Passed a character (interpret as ASCII digit)
+        number += (digit - '0');
+      } else {
+        // Regular integer digit
+        number += digit;
+      }
+    }
+    return number;
+  }
+
+
   /** Calculate power of 10 for huge numbers (without risk of double conversion errors)
    *  by performing repeated multiplication (not super efficient)
    */
@@ -42,6 +89,19 @@ namespace math {
   int64_t rightShift(int64_t number, int digits) {
     return number / power10(digits+1);
   }
+
+  /** Appends a digit between 0 and 9 to the given number and returns the result
+   */
+  int64_t appendDigit(int64_t number, int digit) {
+    return number * 10 + digit;
+  }
+
+  /** Appends a digit between 0 and 9 (as character) to the given number and returns the result
+   */
+  int64_t appendDigit(int64_t number, char digit) {
+    return appendDigit(number, static_cast<int>(digit - '0'));
+  }
+
 
   /** Splits a base 10 number in such a way that second will contain up to 
    *  suffixDigits and all remaining digits will be placed in first.

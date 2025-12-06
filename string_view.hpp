@@ -20,5 +20,19 @@ namespace string_view {
     return number;
   }
   
+
+  /** Returns a string view without leading/trailing whitespaces
+   */
+  std::string_view trim(std::string_view sv) {
+    while (sv.starts_with(' ')) {
+      sv.remove_prefix(1);
+    }
+
+    while (sv.ends_with(' ')) {
+      sv.remove_suffix(1);
+    }
+
+    return sv;
+  }
 }
 

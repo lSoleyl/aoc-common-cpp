@@ -48,5 +48,8 @@
     <ClInclude Include="string_view.hpp">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="vector3d.hpp">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

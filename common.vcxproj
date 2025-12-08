@@ -142,6 +142,7 @@
     <ClInclude Include="task.hpp" />
     <ClInclude Include="time.hpp" />
     <ClInclude Include="vector.hpp" />
+    <ClInclude Include="vector3d.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

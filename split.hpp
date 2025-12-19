@@ -1,5 +1,6 @@
 #include <string_view>
 #include <string>
+#include <algorithm>
 
 /** An improved version of the previous string_view::split() function, which didn't work on temporary std::string
  *  values. If a temporary std::string is passed in this version will move it into the internal range and keep it valid for the
@@ -84,7 +85,7 @@ namespace common {
 
   /** Helper function for the common task of splitting a string into two by a separating character
    *  The split will be performed at the first occurrence of splitChar if multiple occurrences exist.
-   *  If no split character exists, then 
+   *  If no split character exists, then the [source, ""] is returned
    */
   std::pair<std::string_view, std::string_view> split2(std::string_view source, char splitChar) {
     auto splitPos = std::find(source.begin(), source.end(), splitChar);
@@ -92,6 +93,19 @@ namespace common {
     return std::make_pair(
       std::string_view(source.begin(), splitPos),
       std::string_view(splitPos != source.end() ? splitPos + 1 : source.end(), source.end())
+    );
+  }
+
+  /** Helper function for the common task of splitting a string into two by a separating string
+   *  The split will be performed at the first occurrence of splitString if multiple occurrences exist.
+   *  If no split character exists, then the [source, ""] is returned
+   */
+  std::pair<std::string_view, std::string_view> split2(std::string_view source, std::string_view splitString) {
+    auto splitPos = std::search(source.begin(), source.end(), splitString.begin(), splitString.end());
+
+    return std::make_pair(
+      std::string_view(source.begin(), splitPos),
+      std::string_view(splitPos != source.end() ? splitPos + splitString.length() : source.end(), source.end())
     );
   }
 }
